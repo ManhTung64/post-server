@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { PostModule } from './post/post.module';
 import { ProductModule } from './product/product.module';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: 'https://master--stirring-quokka-8367af.netlify.app/',
       port: 5432,
       username: 'postgres',
       password: 'Manhtung1@',
