@@ -9,11 +9,12 @@ import { ProductModule } from './product/product.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'Manhtung1@',
-      database: 'test',
+      url: 'postgres://default:ZLcmK2waEuT5@ep-gentle-snowflake-a1702gjn.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require',
+      // host: 'localhost',
+      // port: 5432,
+      // username: 'postgres',
+      // password: 'Manhtung1@',
+      // database: 'test',
       synchronize: true,
       entities: ['dist/**/*.entity{.ts,.js}'],
     }),
