@@ -9,7 +9,7 @@ import { ProductModule } from './product/product.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'https://master--stirring-quokka-8367af.netlify.app/',
+      host: 'localhost',
       port: 5432,
       username: 'postgres',
       password: 'Manhtung1@',
