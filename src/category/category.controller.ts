@@ -13,6 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { plainToClass } from 'class-transformer';
 import { Request } from 'express';
 import { AuthenticationGuard } from 'src/auth/auth.guard';
 import {
@@ -21,6 +22,7 @@ import {
   PostsByCategoryPagination,
   UpdateCategory,
 } from './category.req.dto';
+import { DataResDto } from './category.res.dto';
 import { CategoryService } from './category.service';
 
 @Controller('api/category')
@@ -49,7 +51,13 @@ export class CategoryController {
   }
   @Get('getall')
   async getAll(@Query() body: CategoryPagination) {
-    return await this.categoryService.getAll(body);
+    return plainToClass(DataResDto, {
+      items: await this.categoryService.getAll(body),
+      count: (await this.categoryService.getAll(new CategoryPagination()))
+        .length,
+      page: body.page ?? 0,
+      limit: body.limit ?? 0,
+    });
   }
   @Get('getposts')
   async getPosts(@Body() body: PostsByCategoryPagination) {
