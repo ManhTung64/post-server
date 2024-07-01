@@ -12,6 +12,7 @@ async function bootstrap() {
       origin: '*',
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       allowedHeaders: 'Content-Type, Accept',
+      credentials: true,
     },
   });
   app.use(json({ limit: '50mb' }));
