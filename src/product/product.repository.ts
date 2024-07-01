@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CategoryPagination } from 'src/category/category.req.dto';
 import { Repository } from 'typeorm';
 import { ProductEntity } from './product.entity';
-import {
-  CreateProduct,
-  Pagination,
-  PostsByProductPagination,
-} from './product.req.dto';
+import { CreateProduct, PostsByProductPagination } from './product.req.dto';
 
 @Injectable()
 export class ProductRepository {
@@ -22,12 +19,20 @@ export class ProductRepository {
   public delete = async (id: string) => {
     return await this.productRepository.delete({ id });
   };
-  public getAll = async (paginate: Pagination) => {
-    return await this.productRepository.find({
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  public getAll = async (paginate: CategoryPagination) => {
+    return !paginate.limit || !paginate.page
+      ? await this.productRepository.find({
+          order: {
+            createdAt: 'DESC',
+          },
+        })
+      : await this.productRepository.find({
+          order: {
+            createdAt: 'DESC',
+          },
+          skip: paginate.limit * (paginate.page - 1),
+          take: paginate.limit,
+        });
   };
   public findOneById = async (id: string) => {
     return await this.productRepository.findOneBy({ id });

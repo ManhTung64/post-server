@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
+import { CategoryPagination } from 'src/category/category.req.dto';
 import { S3Service } from 'src/post/s3.service';
 import { DeleteResult } from 'typeorm';
 import { ProductEntity } from './product.entity';
 import { ProductRepository } from './product.repository';
 import {
   CreateProduct,
-  Pagination,
   PostsByProductPagination,
   UpdateProduct,
 } from './product.req.dto';
@@ -46,7 +46,7 @@ export class ProductService {
       });
     return plainToClass(ProductResDto, update);
   };
-  public getAll = async (payload: Pagination) => {
+  public getAll = async (payload: CategoryPagination) => {
     const result: ProductEntity[] =
       await this.productRepository.getAll(payload);
     return result;

@@ -6,15 +6,16 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthenticationGuard } from 'src/auth/auth.guard';
+import { CategoryPagination } from 'src/category/category.req.dto';
 import {
   CreateProduct,
-  Pagination,
   PostsByProductPagination,
   UpdateProduct,
 } from './product.req.dto';
@@ -40,7 +41,7 @@ export class ProductController {
     return await this.productService.update({ name: body.name, id }, file);
   }
   @Get('getall')
-  async getAll(@Body() body: Pagination) {
+  async getAll(@Query() body: CategoryPagination) {
     return await this.productService.getAll(body);
   }
   @Get('getposts')

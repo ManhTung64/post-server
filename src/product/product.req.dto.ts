@@ -5,6 +5,8 @@ export class CreateProduct {
   name: string;
   @IsOptional()
   image?: string;
+  @IsOptional()
+  description?: string;
 }
 export class UpdateProduct {
   @IsOptional()
@@ -14,6 +16,8 @@ export class UpdateProduct {
   name?: string;
   @IsOptional()
   image?: string;
+  @IsOptional()
+  description?: string;
 }
 export class Pagination {
   page: number = 1;

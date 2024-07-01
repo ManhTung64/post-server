@@ -16,6 +16,9 @@ export class ProductEntity {
   @Column('varchar', { unique: true })
   name: string;
 
+  @Column('varchar', { nullable: true, default: '' })
+  description: string;
+
   @OneToMany(() => PostEntity, (post) => post.product)
   posts: PostEntity[];
 
