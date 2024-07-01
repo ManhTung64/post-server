@@ -6,12 +6,13 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthenticationGuard } from 'src/auth/auth.guard';
-import { Pagination } from 'src/category/category.req.dto';
+import { CategoryPagination } from 'src/category/category.req.dto';
 import {
   CreatePostDto,
   PostsByCategoryAndProduct,
@@ -52,7 +53,7 @@ export class PostController {
     return await this.postService.findOne(id);
   }
   @Get('getall')
-  async getAll(@Body() body: Pagination) {
+  async getAll(@Query() body: CategoryPagination) {
     return await this.postService.getAll(body);
   }
   @Get('byboth')

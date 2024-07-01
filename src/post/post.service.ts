@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CategoryEntity } from 'src/category/category.entity';
-import { Pagination } from 'src/category/category.req.dto';
+import { CategoryPagination } from 'src/category/category.req.dto';
 import { CategoryRepository } from 'src/category/catgory.repository';
 import { ProductEntity } from 'src/product/product.entity';
 import { ProductRepository } from 'src/product/product.repository';
@@ -105,7 +105,7 @@ export class PostService {
   public findOne = async (id: string) => {
     return await this.postRepository.findOneById(id);
   };
-  public getAll = async (payload: Pagination) => {
+  public getAll = async (payload: CategoryPagination) => {
     return await this.postRepository.getAll(payload);
   };
   public getByCategoryAndProduct = async (

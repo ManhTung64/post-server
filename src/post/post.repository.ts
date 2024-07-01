@@ -19,15 +19,27 @@ export class PostRepository {
     return await this.postRepository.delete({ id });
   };
   public getAll = async (paginate: any) => {
-    return await this.postRepository.find({
-      relations: {
-        category: true,
-        product: true,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    return !paginate.page || !paginate.limit
+      ? await this.postRepository.find({
+          relations: {
+            category: true,
+            product: true,
+          },
+          order: {
+            createdAt: 'DESC',
+          },
+        })
+      : await this.postRepository.find({
+          relations: {
+            category: true,
+            product: true,
+          },
+          order: {
+            createdAt: 'DESC',
+          },
+          skip: paginate.limit * (paginate.page - 1),
+          take: paginate.limit,
+        });
   };
   public findOneById = async (id: string) => {
     return await this.postRepository.findOne({
