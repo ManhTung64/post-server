@@ -16,6 +16,6 @@ import { S3Service } from './s3.service';
   ],
   controllers: [PostController],
   providers: [PostService, PostRepository, S3Service],
-  exports: [S3Service],
+  exports: [S3Service, PostRepository],
 })
 export class PostModule {}

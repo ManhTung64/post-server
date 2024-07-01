@@ -10,9 +10,11 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
 import { Request } from 'express';
 import { AuthenticationGuard } from 'src/auth/auth.guard';
 import { CategoryPagination } from 'src/category/category.req.dto';
+import { DataResDto } from 'src/category/category.res.dto';
 import {
   CreatePostDto,
   PostsByCategoryAndProduct,
@@ -57,8 +59,16 @@ export class PostController {
     return await this.postService.getAll(body);
   }
   @Get('byboth')
-  async getByCategoryAndProduct(@Body() body: PostsByCategoryAndProduct) {
-    return await this.postService.getByCategoryAndProduct(body);
+  async getByCategoryAndProduct(
+    @Query() pagination: CategoryPagination,
+    @Body() body: PostsByCategoryAndProduct,
+  ) {
+    return plainToClass(DataResDto, {
+      items: await this.postService.getByCategoryAndProduct(body, pagination),
+      count: (await this.postService.getAll(new CategoryPagination())).length,
+      page: pagination.page ?? 0,
+      limit: pagination.limit ?? 0,
+    });
   }
   @Delete('delete/:id')
   @UseGuards(AuthenticationGuard)

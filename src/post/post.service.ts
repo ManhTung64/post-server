@@ -110,8 +110,12 @@ export class PostService {
   };
   public getByCategoryAndProduct = async (
     payload: PostsByCategoryAndProduct,
+    pagination: CategoryPagination,
   ) => {
-    return await this.postRepository.getAllByCategoryAndProduct(payload);
+    return await this.postRepository.getAllByCategoryAndProduct(
+      payload,
+      pagination,
+    );
   };
   public deleteById = async (id: string) => {
     const result = await this.postRepository.delete(id).catch((e) => {

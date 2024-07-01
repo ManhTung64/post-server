@@ -11,7 +11,7 @@ export class CategoryResDto {
 
 @Expose()
 export class DataResDto {
-  items: CategoryResDto[] | CategoryEntity;
+  items: CategoryResDto[] | CategoryEntity | any;
   limit: number;
   page: number;
   count: number;

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CategoryPagination } from 'src/category/category.req.dto';
 import { Repository } from 'typeorm';
 import { PostEntity } from './post.entity';
 
@@ -50,16 +51,32 @@ export class PostRepository {
       },
     });
   };
-  public getAllByCategoryAndProduct = async (payload: any) => {
-    return await this.postRepository.find({
-      where: {
-        product: { id: payload.productId },
-        category: { id: payload.categoryId },
-      },
-      relations: { category: true, product: true },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  public getAllByCategoryAndProduct = async (
+    payload: any,
+    pagination: CategoryPagination,
+  ) => {
+    return !pagination.limit || !pagination.page
+      ? await this.postRepository.find({
+          where: {
+            product: { id: payload.productId },
+            category: { id: payload.categoryId },
+          },
+          relations: { category: true, product: true },
+          order: {
+            createdAt: 'DESC',
+          },
+        })
+      : await this.postRepository.find({
+          where: {
+            product: { id: payload.productId },
+            category: { id: payload.categoryId },
+          },
+          relations: { category: true, product: true },
+          order: {
+            createdAt: 'DESC',
+          },
+          skip: pagination.limit * (pagination.page - 1),
+          take: pagination.limit,
+        });
   };
 }

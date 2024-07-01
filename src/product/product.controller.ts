@@ -12,8 +12,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { plainToClass } from 'class-transformer';
 import { AuthenticationGuard } from 'src/auth/auth.guard';
 import { CategoryPagination } from 'src/category/category.req.dto';
+import { DataResDto } from 'src/category/category.res.dto';
+import { PostRepository } from 'src/post/post.repository';
 import {
   CreateProduct,
   PostsByProductPagination,
@@ -23,7 +26,10 @@ import { ProductService } from './product.service';
 
 @Controller('api/product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly postRepository: PostRepository,
+  ) {}
   @Post('create')
   @UseGuards(AuthenticationGuard)
   @UseInterceptors(FileInterceptor('file'))
@@ -42,11 +48,23 @@ export class ProductController {
   }
   @Get('getall')
   async getAll(@Query() body: CategoryPagination) {
-    return await this.productService.getAll(body);
+    return plainToClass(DataResDto, {
+      items: await this.productService.getAll(body),
+      count: (await this.productService.getAll(new CategoryPagination()))
+        .length,
+      page: body.page ?? 0,
+      limit: body.limit ?? 0,
+    });
   }
   @Get('getposts')
   async getPosts(@Body() body: PostsByProductPagination) {
-    return await this.productService.findPosts(body);
+    return plainToClass(DataResDto, {
+      items: await this.productService.findPosts(body),
+      count: (await this.postRepository.getAll(new CategoryPagination()))
+        .length,
+      page: body.page ?? 0,
+      limit: body.limit ?? 0,
+    });
   }
   @Delete('delete/:id')
   @UseGuards(AuthenticationGuard)

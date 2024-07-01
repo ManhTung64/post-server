@@ -16,6 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { plainToClass } from 'class-transformer';
 import { Request } from 'express';
 import { AuthenticationGuard } from 'src/auth/auth.guard';
+import { PostRepository } from 'src/post/post.repository';
 import {
   CategoryPagination,
   CreateCategory,
@@ -27,7 +28,10 @@ import { CategoryService } from './category.service';
 
 @Controller('api/category')
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(
+    private readonly categoryService: CategoryService,
+    private readonly postRepository: PostRepository,
+  ) {}
   @Post('create')
   @UseGuards(AuthenticationGuard)
   @UseInterceptors(FileInterceptor('file'))
@@ -61,7 +65,13 @@ export class CategoryController {
   }
   @Get('getposts')
   async getPosts(@Body() body: PostsByCategoryPagination) {
-    return await this.categoryService.findPosts(body);
+    return plainToClass(DataResDto, {
+      items: await this.categoryService.findPosts(body),
+      count: (await this.postRepository.getAll(new CategoryPagination()))
+        .length,
+      page: body.page ?? 0,
+      limit: body.limit ?? 0,
+    });
   }
   @Delete('delete/:id')
   @UseGuards(AuthenticationGuard)
