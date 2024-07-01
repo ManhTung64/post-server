@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -15,8 +16,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { AuthenticationGuard } from 'src/auth/auth.guard';
 import {
+  CategoryPagination,
   CreateCategory,
-  Pagination,
   PostsByCategoryPagination,
   UpdateCategory,
 } from './category.req.dto';
@@ -47,7 +48,7 @@ export class CategoryController {
     return await this.categoryService.update({ name: body.name, id }, file);
   }
   @Get('getall')
-  async getAll(@Body() body: Pagination) {
+  async getAll(@Query() body: CategoryPagination) {
     return await this.categoryService.getAll(body);
   }
   @Get('getposts')

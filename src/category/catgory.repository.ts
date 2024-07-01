@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { CategoryEntity } from './category.entity';
 import {
+  CategoryPagination,
   CreateCategory,
-  Pagination,
   PostsByCategoryPagination,
 } from './category.req.dto';
 
@@ -23,12 +23,16 @@ export class CategoryRepository {
   public delete = async (id: string): Promise<DeleteResult> => {
     return await this.categoryRepository.delete({ id });
   };
-  public getAll = async (paginate: Pagination) => {
-    return await this.categoryRepository.find({
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  public getAll = async (paginate: CategoryPagination) => {
+    return !paginate.limit || !paginate.page
+      ? await this.categoryRepository.find({ order: { createdAt: 'DESC' } })
+      : await this.categoryRepository.find({
+          order: {
+            createdAt: 'DESC',
+          },
+          skip: (paginate.page - 1) * paginate.limit,
+          take: paginate.limit,
+        });
   };
   public findOneById = async (id: string) => {
     return await this.categoryRepository.findOneBy({ id });

@@ -15,6 +15,12 @@ export class UpdateCategory {
   @IsOptional()
   icon?: string;
 }
+export class CategoryPagination {
+  @IsOptional()
+  page: number;
+  @IsOptional()
+  limit: number;
+}
 export class Pagination {
   @IsOptional()
   page: number = 1;

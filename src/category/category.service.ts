@@ -4,8 +4,8 @@ import { S3Service } from 'src/post/s3.service';
 import { DeleteResult } from 'typeorm';
 import { CategoryEntity } from './category.entity';
 import {
+  CategoryPagination,
   CreateCategory,
-  Pagination,
   PostsByCategoryPagination,
   UpdateCategory,
 } from './category.req.dto';
@@ -48,7 +48,7 @@ export class CategoryService {
       });
     return plainToClass(CategoryResDto, update);
   };
-  public getAll = async (payload: Pagination) => {
+  public getAll = async (payload: CategoryPagination) => {
     const result: CategoryEntity[] =
       await this.categoryRepository.getAll(payload);
     return result;
