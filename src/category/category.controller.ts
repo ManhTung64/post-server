@@ -76,6 +76,6 @@ export class CategoryController {
   @Delete('delete/:id')
   @UseGuards(AuthenticationGuard)
   async delete(@Req() req: Request, @Param('id') id: string) {
-    return await this.categoryService.deleteById(id);
+    return { success: await this.categoryService.deleteById(id) };
   }
 }

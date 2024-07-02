@@ -69,6 +69,6 @@ export class ProductController {
   @Delete('delete/:id')
   @UseGuards(AuthenticationGuard)
   async delete(@Param('id') id: string) {
-    return await this.productService.deleteById(id);
+    return { success: await this.productService.deleteById(id) };
   }
 }
