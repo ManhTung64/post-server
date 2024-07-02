@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CategoryPagination } from 'src/category/category.req.dto';
-import { ProductEntity } from 'src/product/product.entity';
 import { DeleteResult, Like } from 'typeorm';
 import { GroupEntity } from './group.entity';
 import { GroupRepository } from './group.repository';
@@ -13,7 +12,6 @@ export class GroupService {
     const result: GroupEntity = await this.groupRepository
       .saveChange({
         ...payload,
-        product: { id: payload.productId } as ProductEntity,
       })
       .catch((error) => {
         throw new BadRequestException("Category's is exsited or server error");
@@ -50,10 +48,7 @@ export class GroupService {
     if (!payload.productId) throw new BadRequestException('Mising productId');
     if (!payload.limit || !payload.page) {
       return await this.groupRepository
-        .findBy({
-          where: { product: { id: payload.productId } },
-          relations: { categories: true },
-        })
+        .getAll(new CategoryPagination())
         .catch(() => {
           throw new BadRequestException('Information is invalid');
         });

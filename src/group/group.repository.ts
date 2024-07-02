@@ -19,11 +19,11 @@ export class GroupRepository {
   ): Promise<GroupEntity[]> => {
     if (!payload.limit || !payload.page) {
       return await this.groupRepository.find({
-        relations: { categories: true },
+        // relations: { categories: true },
       });
     }
     return await this.groupRepository.find({
-      relations: { categories: true },
+      // relations: { categories: true },
       skip: payload.limit * (payload.page - 1),
       take: payload.limit,
     });
@@ -33,7 +33,7 @@ export class GroupRepository {
   };
   public getByProductId = async (productId: string) => {
     return await this.groupRepository.find({
-      where: { product: { id: productId } },
+      // where: { product: { id: productId } },
       order: {
         createdAt: 'DESC',
       },

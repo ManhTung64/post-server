@@ -3,6 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { CategoryEntity } from 'src/category/category.entity';
 import { CategoryPagination } from 'src/category/category.req.dto';
 import { CategoryRepository } from 'src/category/catgory.repository';
+import { GroupEntity } from 'src/group/group.entity';
 import { ProductEntity } from 'src/product/product.entity';
 import { ProductRepository } from 'src/product/product.repository';
 import { PostRepository } from './post.repository';
@@ -64,6 +65,7 @@ export class PostService {
       },
       product,
       category,
+      group: { id: payload.groupId } as GroupEntity,
     });
   };
   public update = async (payload: UpdatePostDto) => {
@@ -81,6 +83,7 @@ export class PostService {
       ...post,
       category,
       product,
+      group: { id: payload.groupId } as GroupEntity,
       content: payload.content,
     });
   };

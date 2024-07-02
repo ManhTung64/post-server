@@ -44,17 +44,17 @@ export class GroupController {
       limit: body.limit ?? 0,
     });
   }
-  @Get('getbyproduct')
-  async getByProduct(
-    @Query() body: CategoryPagination & { productId: string },
-  ) {
-    return plainToClass(DataResDto, {
-      items: await this.groupService.getByProduct(body),
-      count: (await this.groupService.getAll(new CategoryPagination())).length,
-      page: body.page ?? 0,
-      limit: body.limit ?? 0,
-    });
-  }
+  // @Get('getbyproduct')
+  // async getByProduct(
+  //   @Query() body: CategoryPagination & { productId: string },
+  // ) {
+  //   return plainToClass(DataResDto, {
+  //     items: await this.groupService.getByProduct(body),
+  //     count: (await this.groupService.getAll(new CategoryPagination())).length,
+  //     page: body.page ?? 0,
+  //     limit: body.limit ?? 0,
+  //   });
+  // }
   @Get('search')
   async search(@Query() query: { name: string } & CategoryPagination) {
     return plainToClass(DataResDto, {

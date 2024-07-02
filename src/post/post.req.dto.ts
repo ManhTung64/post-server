@@ -13,7 +13,11 @@ export class CreatePostDto {
   productId: string;
   @IsNotEmpty()
   categoryId: string;
+  @IsNotEmpty()
+  groupId: string;
+  @IsOptional()
   product?: ProductEntity;
+  @IsOptional()
   category?: CategoryEntity;
 }
 export class UpdatePostDto {
@@ -26,6 +30,8 @@ export class UpdatePostDto {
   productId?: string;
   @IsOptional()
   categoryId?: string;
+  @IsOptional()
+  groupId?: string;
 }
 export class PostsByCategoryAndProduct {
   @IsUUID()

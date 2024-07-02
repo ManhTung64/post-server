@@ -1,4 +1,5 @@
 import { CategoryEntity } from 'src/category/category.entity';
+import { GroupEntity } from 'src/group/group.entity';
 import { ProductEntity } from 'src/product/product.entity';
 import {
   Column,
@@ -42,6 +43,13 @@ export class PostEntity {
   })
   @JoinColumn()
   product: ProductEntity;
+
+  @ManyToOne(() => GroupEntity, (group) => group.posts, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  group: GroupEntity;
 
   @CreateDateColumn()
   createdAt: Date;

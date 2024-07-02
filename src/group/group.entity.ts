@@ -1,10 +1,8 @@
-import { CategoryEntity } from 'src/category/category.entity';
-import { ProductEntity } from 'src/product/product.entity';
+import { PostEntity } from 'src/post/post.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -18,17 +16,10 @@ export class GroupEntity {
   @Column('varchar')
   name: string;
 
-  @ManyToOne(() => ProductEntity, (product) => product.groups, {
-    nullable: true,
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  product: ProductEntity;
-
-  @OneToMany(() => CategoryEntity, (category) => category.group, {
+  @OneToMany(() => PostEntity, (post) => post.group, {
     nullable: true,
   })
-  categories: CategoryEntity[];
+  posts: PostEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
