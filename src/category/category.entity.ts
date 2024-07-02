@@ -24,7 +24,11 @@ export class CategoryEntity {
   @OneToMany(() => PostEntity, (post) => post.category)
   posts: PostEntity[];
 
-  @ManyToOne(() => GroupEntity, (group) => group.categories)
+  @ManyToOne(() => GroupEntity, (group) => group.categories, {
+    cascade: true,
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   group: GroupEntity;
 
   @CreateDateColumn()

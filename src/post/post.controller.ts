@@ -56,7 +56,12 @@ export class PostController {
   }
   @Get('getall')
   async getAll(@Query() body: CategoryPagination) {
-    return await this.postService.getAll(body);
+    return plainToClass(DataResDto, {
+      items: await this.postService.getAll(body),
+      count: (await this.postService.getAll(new CategoryPagination())).length,
+      page: body.page ?? 0,
+      limit: body.limit ?? 0,
+    });
   }
   @Get('byboth')
   async getByCategoryAndProduct(

@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
+import { GroupEntity } from 'src/group/group.entity';
 import { S3Service } from 'src/post/s3.service';
 import { DeleteResult, Like } from 'typeorm';
 import { CategoryEntity } from './category.entity';
@@ -22,7 +23,10 @@ export class CategoryService {
     const url = await this.s3.UploadOneFile(file);
     payload.icon = url;
     const result: CategoryEntity = await this.categoryRepository
-      .addNew(payload)
+      .addNew({
+        ...payload,
+        group: { id: payload.groupId } as GroupEntity,
+      } as any)
       .catch((error) => {
         throw new BadRequestException("Category's is exsited or server error");
       });

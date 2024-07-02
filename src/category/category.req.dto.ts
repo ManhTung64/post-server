@@ -5,6 +5,8 @@ export class CreateCategory {
   name: string;
   @IsOptional()
   icon?: string;
+  @IsNotEmpty()
+  groupId: string;
 }
 export class UpdateCategory {
   @IsOptional()
@@ -14,6 +16,8 @@ export class UpdateCategory {
   name?: string;
   @IsOptional()
   icon?: string;
+  @IsOptional()
+  groupId?: string;
 }
 export class CategoryPagination {
   @IsOptional()
