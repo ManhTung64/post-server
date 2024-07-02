@@ -24,8 +24,12 @@ export class PostRepository {
     return !paginate.page || !paginate.limit
       ? await this.postRepository.find({
           relations: {
-            category: true,
-            product: true,
+            category: !paginate.includes.includes('category')
+              ? false
+              : paginate.includes.includes('group')
+                ? { group: true }
+                : true,
+            product: paginate.includes.includes('product') ? true : false,
           },
           order: {
             createdAt: 'DESC',
@@ -33,8 +37,12 @@ export class PostRepository {
         })
       : await this.postRepository.find({
           relations: {
-            category: true,
-            product: true,
+            category: !paginate.includes.includes('category')
+              ? false
+              : paginate.includes.includes('group')
+                ? { group: true }
+                : true,
+            product: paginate.includes.includes('product') ? true : false,
           },
           order: {
             createdAt: 'DESC',
@@ -47,7 +55,7 @@ export class PostRepository {
     return await this.postRepository.findOne({
       where: { id },
       relations: {
-        category: true,
+        category: { group: true },
         product: true,
       },
     });
@@ -59,9 +67,18 @@ export class PostRepository {
       ? await this.postRepository.find({
           where: {
             product: { id: payload.productId },
-            category: { id: payload.categoryId },
+            category: payload.groupId
+              ? { group: { id: payload.groupId } }
+              : { id: payload.categoryId },
           },
-          relations: { category: true, product: true },
+          relations: {
+            category: !payload.includes.includes('category')
+              ? false
+              : payload.includes.includes('group')
+                ? { group: true }
+                : true,
+            product: payload.includes.includes('product') ? true : false,
+          },
           order: {
             createdAt: 'DESC',
           },
@@ -69,9 +86,18 @@ export class PostRepository {
       : await this.postRepository.find({
           where: {
             product: { id: payload.productId },
-            category: { id: payload.categoryId },
+            category: payload.groupId
+              ? { group: { id: payload.groupId } }
+              : { id: payload.categoryId },
           },
-          relations: { category: true, product: true },
+          relations: {
+            category: !payload.includes.includes('category')
+              ? false
+              : payload.includes.includes('group')
+                ? { group: true }
+                : true,
+            product: payload.includes.includes('product') ? true : false,
+          },
           order: {
             createdAt: 'DESC',
           },
@@ -87,7 +113,14 @@ export class PostRepository {
           where: {
             category: { id: payload.categoryId },
           },
-          relations: { category: true, product: true },
+          relations: {
+            category: !payload.includes.includes('category')
+              ? false
+              : payload.includes.includes('group')
+                ? { group: true }
+                : true,
+            product: payload.includes.includes('product') ? true : false,
+          },
           order: {
             createdAt: 'DESC',
           },
@@ -96,7 +129,14 @@ export class PostRepository {
           where: {
             category: { id: payload.categoryId },
           },
-          relations: { category: true, product: true },
+          relations: {
+            category: !payload.includes.includes('category')
+              ? false
+              : payload.includes.includes('group')
+                ? { group: true }
+                : true,
+            product: payload.includes.includes('product') ? true : false,
+          },
           order: {
             createdAt: 'DESC',
           },
@@ -112,7 +152,10 @@ export class PostRepository {
           where: {
             product: { id: payload.productId },
           },
-          relations: { category: true, product: true },
+          relations: {
+            category: payload.includes.includes('category') ? true : false,
+            product: payload.includes.includes('product') ? true : false,
+          },
           order: {
             createdAt: 'DESC',
           },
@@ -121,7 +164,10 @@ export class PostRepository {
           where: {
             product: { id: payload.productId },
           },
-          relations: { category: true, product: true },
+          relations: {
+            category: payload.includes.includes('category') ? true : false,
+            product: payload.includes.includes('product') ? true : false,
+          },
           order: {
             createdAt: 'DESC',
           },

@@ -20,6 +20,7 @@ import {
   PostsByCategoryAndProduct,
   UpdatePostDto,
 } from './post.req.dto';
+import { PostResDto } from './post.res.dto';
 import { PostService } from './post.service';
 
 @Controller('api/post')
@@ -65,10 +66,17 @@ export class PostController {
   }
   @Get('byboth')
   async getByCategoryAndProduct(
-    @Query() params: CategoryPagination & PostsByCategoryAndProduct,
+    @Query()
+    params: CategoryPagination & PostsByCategoryAndProduct,
   ) {
     return plainToClass(DataResDto, {
-      items: await this.postService.getByCategoryAndProduct(params),
+      items: (await this.postService.getByCategoryAndProduct(params)).map(
+        (post) => {
+          if (!params.getContent) {
+            return plainToClass(PostResDto, post);
+          } else return post;
+        },
+      ),
       count: (await this.postService.getAll(new CategoryPagination())).length,
       page: params.page ?? 0,
       limit: params.limit ?? 0,

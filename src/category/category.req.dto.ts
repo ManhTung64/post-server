@@ -24,6 +24,8 @@ export class CategoryPagination {
   page: number;
   @IsOptional()
   limit: number;
+  @IsOptional()
+  includes: string = '';
 }
 export class Pagination {
   @IsOptional()

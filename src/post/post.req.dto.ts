@@ -34,4 +34,9 @@ export class PostsByCategoryAndProduct {
   @IsUUID()
   @IsOptional()
   productId: string;
+  @IsUUID()
+  @IsOptional()
+  groupId: string;
+  @IsOptional()
+  getContent: boolean = false;
 }
