@@ -29,9 +29,9 @@ export class UpdatePostDto {
 }
 export class PostsByCategoryAndProduct {
   @IsUUID()
-  @IsNotEmpty()
+  @IsOptional()
   categoryId: string;
   @IsUUID()
-  @IsNotEmpty()
+  @IsOptional()
   productId: string;
 }

@@ -1,8 +1,10 @@
+import { GroupEntity } from 'src/group/group.entity';
 import { PostEntity } from 'src/post/post.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -21,6 +23,9 @@ export class CategoryEntity {
 
   @OneToMany(() => PostEntity, (post) => post.category)
   posts: PostEntity[];
+
+  @ManyToOne(() => GroupEntity, (group) => group.categories)
+  group: GroupEntity;
 
   @CreateDateColumn()
   createdAt: Date;

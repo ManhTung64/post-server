@@ -63,6 +63,16 @@ export class CategoryController {
       limit: body.limit ?? 0,
     });
   }
+  @Get('search')
+  async search(@Query() query: { name: string } & CategoryPagination) {
+    return plainToClass(DataResDto, {
+      items: await this.categoryService.search(query),
+      count: (await this.categoryService.getAll(new CategoryPagination()))
+        .length,
+      page: query.page ?? 0,
+      limit: query.limit ?? 0,
+    });
+  }
   @Get('getposts')
   async getPosts(@Body() body: PostsByCategoryPagination) {
     return plainToClass(DataResDto, {

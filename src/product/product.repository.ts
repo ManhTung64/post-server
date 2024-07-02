@@ -47,4 +47,7 @@ export class ProductRepository {
       },
     });
   };
+  public findBy = async (arg: any): Promise<ProductEntity[]> => {
+    return await this.productRepository.find(arg);
+  };
 }

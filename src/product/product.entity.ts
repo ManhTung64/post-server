@@ -1,3 +1,4 @@
+import { GroupEntity } from 'src/group/group.entity';
 import { PostEntity } from 'src/post/post.entity';
 import {
   Column,
@@ -24,6 +25,9 @@ export class ProductEntity {
 
   @Column({ nullable: true })
   image: string;
+
+  @OneToMany(() => GroupEntity, (group) => group.product)
+  groups: GroupEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

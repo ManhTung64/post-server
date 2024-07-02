@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { S3Service } from 'src/post/s3.service';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, Like } from 'typeorm';
 import { CategoryEntity } from './category.entity';
 import {
   CategoryPagination,
@@ -69,5 +69,20 @@ export class CategoryService {
         throw new BadRequestException('Error');
       });
     return result;
+  };
+  public search = async (
+    payload: { name: string } & CategoryPagination,
+  ): Promise<CategoryEntity[]> => {
+    if (!payload.name || !payload.limit) {
+      return await this.categoryRepository.findBy({
+        where: { name: Like(`%${payload.name}%`) },
+      });
+    } else {
+      return await this.categoryRepository.findBy({
+        where: { name: Like(`%${payload.name}%`) },
+        skip: (payload.page - 1) * payload.limit,
+        take: payload.limit,
+      });
+    }
   };
 }

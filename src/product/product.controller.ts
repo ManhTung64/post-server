@@ -71,4 +71,14 @@ export class ProductController {
   async delete(@Param('id') id: string) {
     return { success: await this.productService.deleteById(id) };
   }
+  @Get('search')
+  async search(@Query() query: { name: string } & CategoryPagination) {
+    return plainToClass(DataResDto, {
+      items: await this.productService.search(query),
+      count: (await this.productService.getAll(new CategoryPagination()))
+        .length,
+      page: query.page ?? 0,
+      limit: query.limit ?? 0,
+    });
+  }
 }

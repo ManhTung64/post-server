@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
 import { CategoryEntity } from 'src/category/category.entity';
 import { CategoryPagination } from 'src/category/category.req.dto';
 import { CategoryRepository } from 'src/category/catgory.repository';
@@ -109,13 +110,28 @@ export class PostService {
     return await this.postRepository.getAll(payload);
   };
   public getByCategoryAndProduct = async (
-    payload: PostsByCategoryAndProduct,
-    pagination: CategoryPagination,
+    payload: CategoryPagination & PostsByCategoryAndProduct,
   ) => {
-    return await this.postRepository.getAllByCategoryAndProduct(
-      payload,
-      pagination,
-    );
+    if (payload.categoryId && payload.productId) {
+      return await this.postRepository
+        .getAllByCategoryAndProduct(payload)
+        .catch(() => {
+          throw new BadRequestException('Information is invalid');
+        });
+    } else if (payload.categoryId && !payload.productId) {
+      return await this.postRepository.getAllByCategory(payload).catch(() => {
+        throw new BadRequestException('Information is invalid');
+      });
+    } else if (!payload.categoryId && payload.productId) {
+      return await this.postRepository.getAllByProduct(payload).catch(() => {
+        throw new BadRequestException('Information is invalid');
+      });
+    } else
+      return await this.postRepository
+        .getAll(plainToClass(CategoryPagination, payload))
+        .catch(() => {
+          throw new BadRequestException('Information is invalid');
+        });
   };
   public deleteById = async (id: string) => {
     const result = await this.postRepository.delete(id).catch((e) => {

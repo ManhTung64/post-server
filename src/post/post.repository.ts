@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryPagination } from 'src/category/category.req.dto';
 import { Repository } from 'typeorm';
 import { PostEntity } from './post.entity';
+import { PostsByCategoryAndProduct } from './post.req.dto';
 
 @Injectable()
 export class PostRepository {
@@ -52,10 +53,9 @@ export class PostRepository {
     });
   };
   public getAllByCategoryAndProduct = async (
-    payload: any,
-    pagination: CategoryPagination,
+    payload: CategoryPagination & PostsByCategoryAndProduct,
   ) => {
-    return !pagination.limit || !pagination.page
+    return !payload.limit || !payload.page
       ? await this.postRepository.find({
           where: {
             product: { id: payload.productId },
@@ -75,8 +75,58 @@ export class PostRepository {
           order: {
             createdAt: 'DESC',
           },
-          skip: pagination.limit * (pagination.page - 1),
-          take: pagination.limit,
+          skip: payload.limit * (payload.page - 1),
+          take: payload.limit,
+        });
+  };
+  public getAllByCategory = async (
+    payload: CategoryPagination & PostsByCategoryAndProduct,
+  ) => {
+    return !payload.limit || !payload.page
+      ? await this.postRepository.find({
+          where: {
+            category: { id: payload.categoryId },
+          },
+          relations: { category: true, product: true },
+          order: {
+            createdAt: 'DESC',
+          },
+        })
+      : await this.postRepository.find({
+          where: {
+            category: { id: payload.categoryId },
+          },
+          relations: { category: true, product: true },
+          order: {
+            createdAt: 'DESC',
+          },
+          skip: payload.limit * (payload.page - 1),
+          take: payload.limit,
+        });
+  };
+  public getAllByProduct = async (
+    payload: CategoryPagination & PostsByCategoryAndProduct,
+  ) => {
+    return !payload.limit || !payload.page
+      ? await this.postRepository.find({
+          where: {
+            product: { id: payload.productId },
+          },
+          relations: { category: true, product: true },
+          order: {
+            createdAt: 'DESC',
+          },
+        })
+      : await this.postRepository.find({
+          where: {
+            product: { id: payload.productId },
+          },
+          relations: { category: true, product: true },
+          order: {
+            createdAt: 'DESC',
+          },
+          skip: payload.limit * (payload.page - 1),
+          take: payload.limit,
         });
   };
 }

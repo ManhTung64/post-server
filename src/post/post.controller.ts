@@ -60,14 +60,13 @@ export class PostController {
   }
   @Get('byboth')
   async getByCategoryAndProduct(
-    @Query() pagination: CategoryPagination,
-    @Body() body: PostsByCategoryAndProduct,
+    @Query() params: CategoryPagination & PostsByCategoryAndProduct,
   ) {
     return plainToClass(DataResDto, {
-      items: await this.postService.getByCategoryAndProduct(body, pagination),
+      items: await this.postService.getByCategoryAndProduct(params),
       count: (await this.postService.getAll(new CategoryPagination())).length,
-      page: pagination.page ?? 0,
-      limit: pagination.limit ?? 0,
+      page: params.page ?? 0,
+      limit: params.limit ?? 0,
     });
   }
   @Delete('delete/:id')

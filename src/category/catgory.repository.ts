@@ -37,6 +37,9 @@ export class CategoryRepository {
   public findOneById = async (id: string) => {
     return await this.categoryRepository.findOneBy({ id });
   };
+  public findBy = async (arg: any): Promise<CategoryEntity[]> => {
+    return await this.categoryRepository.find(arg);
+  };
   public findPostsById = async (payload: PostsByCategoryPagination) => {
     try {
       return await this.categoryRepository.find({
