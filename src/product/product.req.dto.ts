@@ -7,6 +7,8 @@ export class CreateProduct {
   image?: string;
   @IsOptional()
   description?: string;
+  @IsOptional()
+  slug?: string;
 }
 export class UpdateProduct {
   @IsOptional()
@@ -18,6 +20,8 @@ export class UpdateProduct {
   image?: string;
   @IsOptional()
   description?: string;
+  @IsOptional()
+  slug?: string;
 }
 export class Pagination {
   page: number = 1;

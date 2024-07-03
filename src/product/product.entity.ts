@@ -25,6 +25,9 @@ export class ProductEntity {
   @Column({ nullable: true })
   image: string;
 
+  @Column('varchar', { nullable: true, unique: true })
+  slug: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

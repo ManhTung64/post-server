@@ -6,6 +6,7 @@ import { CategoryRepository } from 'src/category/catgory.repository';
 import { GroupEntity } from 'src/group/group.entity';
 import { ProductEntity } from 'src/product/product.entity';
 import { ProductRepository } from 'src/product/product.repository';
+import { Like } from 'typeorm';
 import { PostRepository } from './post.repository';
 import {
   CreatePostDto,
@@ -58,15 +59,20 @@ export class PostService {
     if (!category || !product)
       throw new BadRequestException('Category or product is invalid');
     payload.basecontent = await this.replaceFile(payload.basecontent);
-    return await this.postRepository.addNew({
-      content: {
-        content: payload.basecontent,
-        files: payload.files,
-      },
-      product,
-      category,
-      group: { id: payload.groupId } as GroupEntity,
-    });
+    return await this.postRepository
+      .addNew({
+        content: {
+          content: payload.basecontent,
+          files: payload.files,
+        },
+        product,
+        slug: payload.slug,
+        category,
+        group: { id: payload.groupId } as GroupEntity,
+      })
+      .catch(() => {
+        throw new BadRequestException('Information is invalid');
+      });
   };
   public update = async (payload: UpdatePostDto) => {
     const [category, product]: [CategoryEntity, ProductEntity] =
@@ -129,12 +135,29 @@ export class PostService {
       return await this.postRepository.getAllByProduct(payload).catch(() => {
         throw new BadRequestException('Information is invalid');
       });
-    } else
+    } else if (!payload.categoryId && !payload.productId && !payload.slug) {
       return await this.postRepository
         .getAll(plainToClass(CategoryPagination, payload))
         .catch(() => {
           throw new BadRequestException('Information is invalid');
         });
+    } else {
+      return await this.postRepository.findBy({
+        where: {
+          slug: Like(`%${payload.slug}%`),
+          category: { id: payload.categoryId },
+          product: { id: payload.productId },
+        },
+        relations: {
+          category: payload.includes.includes('category'),
+          group: payload.includes.includes('group'),
+          product: payload.includes.includes('product'),
+        },
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+    }
   };
   public deleteById = async (id: string) => {
     const result = await this.postRepository.delete(id).catch((e) => {

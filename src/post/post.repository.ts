@@ -158,4 +158,7 @@ export class PostRepository {
           take: payload.limit,
         });
   };
+  public findBy = async (arg: any) => {
+    return await this.postRepository.find(arg);
+  };
 }

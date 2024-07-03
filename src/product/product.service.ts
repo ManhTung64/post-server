@@ -23,7 +23,7 @@ export class ProductService {
     const result: ProductEntity = await this.productRepository
       .addNew(payload)
       .catch((error) => {
-        throw new BadRequestException("Product's is exsited or server error");
+        throw new BadRequestException('Information is invalid');
       });
     return plainToClass(ProductResDto, result);
   };
@@ -31,7 +31,7 @@ export class ProductService {
     const result: ProductEntity = await this.productRepository
       .findOneById(payload.id)
       .catch((e) => {
-        throw new BadRequestException("Category's is not found");
+        throw new BadRequestException('Information is invalid');
       });
     if (file) {
       result.image = await this.s3.UploadOneFile(file);
@@ -40,9 +40,7 @@ export class ProductService {
     const update: ProductEntity = await this.productRepository
       .saveChange(result)
       .catch((error) => {
-        throw new BadRequestException(
-          "Category's name is exsited or server error",
-        );
+        throw new BadRequestException('Information is invalid or exsited');
       });
     return plainToClass(ProductResDto, update);
   };
@@ -70,15 +68,21 @@ export class ProductService {
     return result;
   };
   public search = async (
-    payload: { name: string } & CategoryPagination,
+    payload: { name?: string; slug?: string } & CategoryPagination,
   ): Promise<ProductEntity[]> => {
     if (!payload.name || !payload.limit) {
       return await this.productRepository.findBy({
-        where: { name: Like(`%${payload.name}%`) },
+        where: [
+          { name: Like(`%${payload.name}%`) },
+          { slug: Like(`%${payload.slug}%`) },
+        ],
       });
     } else {
       return await this.productRepository.findBy({
-        where: { name: Like(`%${payload.name}%`) },
+        where: [
+          { name: Like(`%${payload.name}%`) },
+          { slug: Like(`%${payload.slug}%`) },
+        ],
         skip: (payload.page - 1) * payload.limit,
         take: payload.limit,
       });

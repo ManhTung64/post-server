@@ -72,7 +72,9 @@ export class ProductController {
     return { success: await this.productService.deleteById(id) };
   }
   @Get('search')
-  async search(@Query() query: { name: string } & CategoryPagination) {
+  async search(
+    @Query() query: { name?: string; slug?: string } & CategoryPagination,
+  ) {
     return plainToClass(DataResDto, {
       items: await this.productService.search(query),
       count: (await this.productService.getAll(new CategoryPagination()))

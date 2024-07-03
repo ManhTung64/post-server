@@ -19,6 +19,8 @@ export class CreatePostDto {
   product?: ProductEntity;
   @IsOptional()
   category?: CategoryEntity;
+  @IsOptional()
+  slug?: string;
 }
 export class UpdatePostDto {
   @IsOptional()
@@ -32,6 +34,8 @@ export class UpdatePostDto {
   categoryId?: string;
   @IsOptional()
   groupId?: string;
+  @IsOptional()
+  slug?: string;
 }
 export class PostsByCategoryAndProduct {
   @IsUUID()
@@ -45,4 +49,6 @@ export class PostsByCategoryAndProduct {
   groupId: string;
   @IsOptional()
   getContent: boolean = false;
+  @IsOptional()
+  slug: string;
 }

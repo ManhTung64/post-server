@@ -51,6 +51,9 @@ export class PostEntity {
   @JoinColumn()
   group: GroupEntity;
 
+  @Column('varchar', { nullable: true, unique: true })
+  slug: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
