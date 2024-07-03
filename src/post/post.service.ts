@@ -89,6 +89,7 @@ export class PostService {
       ...post,
       category,
       product,
+      slug: payload.slug,
       group: { id: payload.groupId } as GroupEntity,
       content: payload.content,
     });
