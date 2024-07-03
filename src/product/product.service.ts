@@ -77,19 +77,20 @@ export class ProductService {
   public search = async (
     payload: { name?: string; slug?: string } & CategoryPagination,
   ): Promise<ProductEntity[]> => {
+    console.log(payload.name, payload.slug);
     if (!payload.name || !payload.limit) {
       return await this.productRepository.findBy({
-        where: [
-          { name: Like(`%${payload.name ?? ''}%`) },
-          { slug: Like(`%${payload.slug ?? ''}%`) },
-        ],
+        where: {
+          name: Like(`%${payload.name ?? ''}%`),
+          slug: Like(`%${payload.slug ?? ''}%`),
+        },
       });
     } else {
       return await this.productRepository.findBy({
-        where: [
-          { name: Like(`%${payload.name ?? ''}%`) },
-          { slug: Like(`%${payload.slug ?? ''}%`) },
-        ],
+        where: {
+          name: Like(`%${payload.name ?? ''}%`),
+          slug: Like(`%${payload.slug ?? ''}%`),
+        },
         skip: (payload.page - 1) * payload.limit,
         take: payload.limit,
       });
