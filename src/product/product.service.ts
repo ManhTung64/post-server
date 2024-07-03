@@ -8,6 +8,7 @@ import { ProductRepository } from './product.repository';
 import {
   CreateProduct,
   PostsByProductPagination,
+  Search,
   UpdateProduct,
 } from './product.req.dto';
 import { ProductResDto } from './product.res.dto';
@@ -46,9 +47,13 @@ export class ProductService {
       });
     return plainToClass(ProductResDto, update);
   };
-  public getAll = async (payload: CategoryPagination) => {
-    const result: ProductEntity[] =
-      await this.productRepository.getAll(payload);
+  public getAll = async (payload: CategoryPagination & Search) => {
+    const result: ProductEntity[] = await this.productRepository.findBy({
+      where: [
+        { name: Like(`%${payload.name}%`) },
+        { slug: Like(`%${payload.slug}%`) },
+      ],
+    });
     return result;
   };
   public deleteById = async (id: string): Promise<boolean> => {
@@ -75,15 +80,15 @@ export class ProductService {
     if (!payload.name || !payload.limit) {
       return await this.productRepository.findBy({
         where: [
-          { name: Like(`%${payload.name}%`) },
-          { slug: Like(`%${payload.slug}%`) },
+          { name: Like(`%${payload.name ?? ''}%`) },
+          { slug: Like(`%${payload.slug ?? ''}%`) },
         ],
       });
     } else {
       return await this.productRepository.findBy({
         where: [
-          { name: Like(`%${payload.name}%`) },
-          { slug: Like(`%${payload.slug}%`) },
+          { name: Like(`%${payload.name ?? ''}%`) },
+          { slug: Like(`%${payload.slug ?? ''}%`) },
         ],
         skip: (payload.page - 1) * payload.limit,
         take: payload.limit,

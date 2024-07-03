@@ -27,6 +27,12 @@ export class Pagination {
   page: number = 1;
   limit: number = 10;
 }
+export class Search {
+  @IsOptional()
+  slug?: string;
+  @IsOptional()
+  name?: string;
+}
 export class PostsByProductPagination extends Pagination {
   @IsNotEmpty()
   id: string;

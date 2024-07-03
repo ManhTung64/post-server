@@ -20,6 +20,7 @@ import { PostRepository } from 'src/post/post.repository';
 import {
   CreateProduct,
   PostsByProductPagination,
+  Search,
   UpdateProduct,
 } from './product.req.dto';
 import { ProductService } from './product.service';
@@ -50,9 +51,9 @@ export class ProductController {
     );
   }
   @Get('getall')
-  async getAll(@Query() body: CategoryPagination) {
+  async getAll(@Query() body: CategoryPagination & Search) {
     return plainToClass(DataResDto, {
-      items: await this.productService.getAll(body),
+      items: await this.productService.search(body),
       count: (await this.productService.getAll(new CategoryPagination()))
         .length,
       page: body.page ?? 0,
