@@ -37,6 +37,7 @@ export class ProductService {
       result.image = await this.s3.UploadOneFile(file);
     }
     result.name = payload.name;
+    result.slug = payload.slug;
     const update: ProductEntity = await this.productRepository
       .saveChange(result)
       .catch((error) => {
