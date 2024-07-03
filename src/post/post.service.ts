@@ -128,7 +128,11 @@ export class PostService {
         .catch(() => {
           throw new BadRequestException('Information is invalid');
         });
-    } else if (payload.categoryId && !payload.productId) {
+    } else if (
+      payload.categoryId &&
+      !payload.productId &&
+      !payload.productSlug
+    ) {
       return await this.postRepository.getAllByCategory(payload).catch(() => {
         throw new BadRequestException('Information is invalid');
       });
@@ -140,27 +144,54 @@ export class PostService {
       return await this.postRepository.getAllByProduct(payload).catch(() => {
         throw new BadRequestException('Information is invalid');
       });
-    } else if (!payload.categoryId && !payload.productId && !payload.slug) {
+    } else if (
+      !payload.categoryId &&
+      !payload.productId &&
+      !payload.slug &&
+      !payload.productSlug
+    ) {
       return await this.postRepository
         .getAll(plainToClass(CategoryPagination, payload))
         .catch(() => {
           throw new BadRequestException('Information is invalid');
         });
     } else {
+      const conditions = [];
+
+      if (payload.slug) {
+        conditions.push({ slug: Like(`%${payload.slug}%`) });
+      }
+
+      if (payload.categoryId) {
+        conditions.push({ category: { id: payload.categoryId } });
+      }
+
+      if (payload.productId || payload.productSlug) {
+        const productConditions = [];
+        if (payload.productId) {
+          productConditions.push({ id: payload.productId });
+        }
+        if (payload.productSlug) {
+          productConditions.push({ slug: Like(`%${payload.productSlug}%`) });
+        }
+        conditions.push({ product: productConditions });
+      }
+
+      // Tạo một đối tượng để lưu trữ các quan hệ
+      const relations: Record<string, boolean> = {};
+      if (payload.includes.includes('category')) {
+        relations.category = true;
+      }
+      if (payload.includes.includes('group')) {
+        relations.group = true;
+      }
+      if (payload.includes.includes('product')) {
+        relations.product = true;
+      }
+
       return await this.postRepository.findBy({
-        where: {
-          slug: Like(`%${payload.slug}%`),
-          category: { id: payload.categoryId },
-          product: {
-            id: payload.productId,
-            slug: Like(`%${payload.productSlug}%`),
-          },
-        },
-        relations: {
-          category: payload.includes.includes('category'),
-          group: payload.includes.includes('group'),
-          product: payload.includes.includes('product'),
-        },
+        where: conditions,
+        relations: relations,
         order: {
           createdAt: 'DESC',
         },
