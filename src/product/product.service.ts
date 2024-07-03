@@ -38,6 +38,7 @@ export class ProductService {
     }
     result.name = payload.name;
     result.slug = payload.slug;
+    console.log(result);
     const update: ProductEntity = await this.productRepository
       .saveChange(result)
       .catch((error) => {

@@ -14,7 +14,7 @@ export class UpdateProduct {
   @IsOptional()
   @IsUUID()
   id: string;
-  @IsNotEmpty()
+  @IsOptional()
   name?: string;
   @IsOptional()
   image?: string;

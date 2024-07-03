@@ -51,4 +51,6 @@ export class PostsByCategoryAndProduct {
   getContent: boolean = false;
   @IsOptional()
   slug: string;
+  @IsOptional()
+  productSlug: string;
 }

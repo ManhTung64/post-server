@@ -44,7 +44,10 @@ export class ProductController {
     @Param('id') id: string,
     @UploadedFile() file?: any,
   ) {
-    return await this.productService.update({ name: body.name, id }, file);
+    return await this.productService.update(
+      { name: body.name, id, slug: body.slug, description: body.description },
+      file,
+    );
   }
   @Get('getall')
   async getAll(@Query() body: CategoryPagination) {

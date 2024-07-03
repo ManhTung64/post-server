@@ -122,7 +122,7 @@ export class PostService {
   public getByCategoryAndProduct = async (
     payload: CategoryPagination & PostsByCategoryAndProduct,
   ) => {
-    if (payload.categoryId && payload.productId) {
+    if (payload.categoryId && payload.productId && !payload.productSlug) {
       return await this.postRepository
         .getAllByCategoryAndProduct(payload)
         .catch(() => {
@@ -132,7 +132,11 @@ export class PostService {
       return await this.postRepository.getAllByCategory(payload).catch(() => {
         throw new BadRequestException('Information is invalid');
       });
-    } else if (!payload.categoryId && payload.productId) {
+    } else if (
+      !payload.categoryId &&
+      payload.productId &&
+      !payload.productSlug
+    ) {
       return await this.postRepository.getAllByProduct(payload).catch(() => {
         throw new BadRequestException('Information is invalid');
       });
@@ -147,7 +151,10 @@ export class PostService {
         where: {
           slug: Like(`%${payload.slug}%`),
           category: { id: payload.categoryId },
-          product: { id: payload.productId },
+          product: {
+            id: payload.productId,
+            slug: Like(`%${payload.productSlug}%`),
+          },
         },
         relations: {
           category: payload.includes.includes('category'),
