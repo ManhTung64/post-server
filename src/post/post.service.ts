@@ -65,6 +65,7 @@ export class PostService {
           content: payload.basecontent,
           files: payload.files,
         },
+        title: payload.title,
         product,
         slug: payload.slug,
         category,
@@ -89,6 +90,7 @@ export class PostService {
       ...post,
       category,
       product,
+      title: payload.title,
       slug: payload.slug,
       group: { id: payload.groupId } as GroupEntity,
       content: payload.content,
@@ -161,6 +163,9 @@ export class PostService {
       if (payload.slug) {
         conditions.push({ slug: Like(`%${payload.slug}%`) });
       }
+      if (payload.title) {
+        conditions.push({ title: Like(`%${payload.title}%`) });
+      }
 
       if (payload.categoryId) {
         conditions.push({ category: { id: payload.categoryId } });
@@ -195,6 +200,11 @@ export class PostService {
         order: {
           createdAt: 'DESC',
         },
+        skip:
+          payload.limit && payload.page
+            ? (payload.page - 1) * payload.limit
+            : 0,
+        take: payload.limit && payload.page ? payload.limit : 100,
       });
     }
   };

@@ -27,6 +27,9 @@ export class PostEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column('varchar', { nullable: true })
+  title: string;
+
   @Column('simple-json')
   content: Content;
 

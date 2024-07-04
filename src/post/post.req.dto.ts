@@ -4,6 +4,8 @@ import { ProductEntity } from 'src/product/product.entity';
 import { Content, FileUpload } from './post.entity';
 
 export class CreatePostDto {
+  @IsNotEmpty()
+  title: string;
   @IsOptional()
   content: Content;
   @IsNotEmpty()
@@ -23,6 +25,8 @@ export class CreatePostDto {
   slug?: string;
 }
 export class UpdatePostDto {
+  @IsOptional()
+  title: string;
   @IsOptional()
   content?: Content;
   @IsNotEmpty()
@@ -53,4 +57,6 @@ export class PostsByCategoryAndProduct {
   slug: string;
   @IsOptional()
   productSlug: string;
+  @IsOptional()
+  title: string;
 }
