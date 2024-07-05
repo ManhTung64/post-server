@@ -1,12 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
 import { CategoryEntity } from 'src/category/category.entity';
 import { CategoryPagination } from 'src/category/category.req.dto';
 import { CategoryRepository } from 'src/category/catgory.repository';
 import { GroupEntity } from 'src/group/group.entity';
 import { ProductEntity } from 'src/product/product.entity';
 import { ProductRepository } from 'src/product/product.repository';
-import { Like } from 'typeorm';
+import { Like, Raw } from 'typeorm';
 import { PostRepository } from './post.repository';
 import {
   CreatePostDto,
@@ -124,89 +123,58 @@ export class PostService {
   public getByCategoryAndProduct = async (
     payload: CategoryPagination & PostsByCategoryAndProduct,
   ) => {
-    if (payload.categoryId && payload.productId && !payload.productSlug) {
-      return await this.postRepository
-        .getAllByCategoryAndProduct(payload)
-        .catch(() => {
-          throw new BadRequestException('Information is invalid');
-        });
-    } else if (
-      payload.categoryId &&
-      !payload.productId &&
-      !payload.productSlug
-    ) {
-      return await this.postRepository.getAllByCategory(payload).catch(() => {
-        throw new BadRequestException('Information is invalid');
-      });
-    } else if (
-      !payload.categoryId &&
-      payload.productId &&
-      !payload.productSlug
-    ) {
-      return await this.postRepository.getAllByProduct(payload).catch(() => {
-        throw new BadRequestException('Information is invalid');
-      });
-    } else if (
-      !payload.categoryId &&
-      !payload.productId &&
-      !payload.slug &&
-      !payload.productSlug
-    ) {
-      return await this.postRepository
-        .getAll(plainToClass(CategoryPagination, payload))
-        .catch(() => {
-          throw new BadRequestException('Information is invalid');
-        });
-    } else {
-      const conditions = [];
+    //  else{
+    const conditions: any = {};
 
-      if (payload.slug) {
-        conditions.push({ slug: Like(`%${payload.slug}%`) });
-      }
-      if (payload.title) {
-        conditions.push({ title: Like(`%${payload.title}%`) });
-      }
-
-      if (payload.categoryId) {
-        conditions.push({ category: { id: payload.categoryId } });
-      }
-
-      if (payload.productId || payload.productSlug) {
-        const productConditions = [];
-        if (payload.productId) {
-          productConditions.push({ id: payload.productId });
-        }
-        if (payload.productSlug) {
-          productConditions.push({ slug: Like(`%${payload.productSlug}%`) });
-        }
-        conditions.push({ product: productConditions });
-      }
-
-      // Tạo một đối tượng để lưu trữ các quan hệ
-      const relations: Record<string, boolean> = {};
-      if (payload.includes.includes('category')) {
-        relations.category = true;
-      }
-      if (payload.includes.includes('group')) {
-        relations.group = true;
-      }
-      if (payload.includes.includes('product')) {
-        relations.product = true;
-      }
-
-      return await this.postRepository.findBy({
-        where: conditions,
-        relations: relations,
-        order: {
-          createdAt: 'DESC',
-        },
-        skip:
-          payload.limit && payload.page
-            ? (payload.page - 1) * payload.limit
-            : 0,
-        take: payload.limit && payload.page ? payload.limit : 100,
-      });
+    if (payload.slug) {
+      conditions.slug = Like(`${payload.slug}`);
     }
+    if (payload.title) {
+      conditions.title = Raw(
+        (alias) => `(${alias} ILIKE :title1 OR ${alias} ILIKE :title2)`,
+        {
+          title1: `%${payload.title}%`,
+          title2: `%${payload.title.toLowerCase()}%`,
+        },
+      );
+    }
+    if (payload.categoryId) {
+      conditions.category = { id: payload.categoryId };
+    }
+
+    if (payload.productId || payload.productSlug) {
+      const productConditions: any = {};
+      if (payload.productId) {
+        productConditions.id = payload.productId;
+      }
+      if (payload.productSlug) {
+        productConditions.slug = Like(`${payload.productSlug}`);
+      }
+      conditions.product = productConditions;
+    }
+
+    const relations: Record<string, boolean> = {};
+    if (payload.includes && payload.includes.includes('category')) {
+      relations.category = true;
+    }
+    if (payload.includes && payload.includes.includes('group')) {
+      relations.group = true;
+    }
+    if (payload.includes && payload.includes.includes('product')) {
+      relations.product = true;
+    }
+
+    return await this.postRepository.findBy({
+      where: conditions,
+      relations: relations,
+      order: {
+        createdAt: 'DESC',
+      },
+      skip:
+        payload.limit && payload.page ? (payload.page - 1) * payload.limit : 0,
+      take: payload.limit && payload.page ? payload.limit : 100,
+    });
+    // }
   };
   public deleteById = async (id: string) => {
     const result = await this.postRepository.delete(id).catch((e) => {
