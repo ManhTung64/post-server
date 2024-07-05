@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
+import { GroupModule } from './group/group.module';
 import { PostModule } from './post/post.module';
 import { ProductModule } from './product/product.module';
-import { GroupModule } from './group/group.module';
 
 @Module({
   imports: [
@@ -18,6 +19,11 @@ import { GroupModule } from './group/group.module';
       // database: 'test',
       synchronize: true,
       entities: ['dist/**/*.entity{.ts,.js}'],
+    }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.TOKEN_SECRET,
+      signOptions: { expiresIn: '180d' },
     }),
     CategoryModule,
     ProductModule,

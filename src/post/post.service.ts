@@ -123,7 +123,6 @@ export class PostService {
   public getByCategoryAndProduct = async (
     payload: CategoryPagination & PostsByCategoryAndProduct,
   ) => {
-    //  else{
     const conditions: any = {};
 
     if (payload.slug) {
@@ -154,15 +153,13 @@ export class PostService {
     }
 
     const relations: Record<string, boolean> = {};
-    if (payload.includes && payload.includes.includes('category')) {
+    if (payload.includes && payload.includes.includes('category'))
       relations.category = true;
-    }
-    if (payload.includes && payload.includes.includes('group')) {
+
+    if (payload.includes && payload.includes.includes('group'))
       relations.group = true;
-    }
-    if (payload.includes && payload.includes.includes('product')) {
+    if (payload.includes && payload.includes.includes('product'))
       relations.product = true;
-    }
 
     return await this.postRepository.findBy({
       where: conditions,
@@ -174,7 +171,6 @@ export class PostService {
         payload.limit && payload.page ? (payload.page - 1) * payload.limit : 0,
       take: payload.limit && payload.page ? payload.limit : 100,
     });
-    // }
   };
   public deleteById = async (id: string) => {
     const result = await this.postRepository.delete(id).catch((e) => {

@@ -6,12 +6,15 @@ import { AuthRepository } from './auth.repository';
 import { ICreateAccount, ILogin } from './auth.req.dto';
 import { AuthResDto } from './auth.res.dto';
 import { PasswordService } from './password.service';
+import { TokenEntity } from './token.entity';
+import { TokenRepository } from './token.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private authRepository: AuthRepository,
     private passwordService: PasswordService,
+    private readonly tokenRepository: TokenRepository,
     private service: JwtService,
   ) {}
   public createNew = async (payload: ICreateAccount): Promise<AuthResDto> => {
@@ -43,6 +46,14 @@ export class AuthService {
       token: await this.createToken(user),
     });
   };
+  public logout = async (reqToken: string): Promise<boolean> => {
+    const token: TokenEntity =
+      await this.tokenRepository.findOneByToken(reqToken);
+    if (!token) throw new BadRequestException('Token is not exsited');
+    if (await this.tokenRepository.saveChange({ ...token, active: false }))
+      return true;
+    else return false;
+  };
   public async verifyToken(token: string) {
     return await this.service
       .verifyAsync(token, {
@@ -57,6 +68,20 @@ export class AuthService {
       id: account.id,
       username: account.username,
     };
-    return await this.service.signAsync(tokenData);
+    const data = await this.service
+      .signAsync(tokenData, {
+        secret: process.env.TOKEN_SECRET,
+      })
+      .catch((e) => console.log(e));
+    if (!data) throw new BadRequestException('Cannot create token');
+    const currentDate = new Date();
+    const expireDate = new Date(
+      currentDate.getTime() + 180 * 24 * 60 * 60 * 1000,
+    );
+    await this.tokenRepository.saveChange({
+      token: data,
+      expireAt: expireDate,
+    });
+    return data;
   }
 }

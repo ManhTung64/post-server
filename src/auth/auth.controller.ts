@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthenticationGuard } from './auth.guard';
 import { ICreateAccount, ILogin } from './auth.req.dto';
@@ -16,5 +16,10 @@ export class AuthController {
   @Post('login')
   async login(@Req() request: Request, @Body() body: ILogin) {
     return await this.authService.login(body);
+  }
+  @Get('logout')
+  @UseGuards(AuthenticationGuard)
+  async logout(@Req() request: Request) {
+    return { success: await this.authService.logout(request['token']) };
   }
 }
