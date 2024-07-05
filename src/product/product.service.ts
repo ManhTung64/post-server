@@ -24,6 +24,7 @@ export class ProductService {
     const result: ProductEntity = await this.productRepository
       .addNew(payload)
       .catch((error) => {
+        console.log(error);
         throw new BadRequestException('Information is invalid');
       });
     return plainToClass(ProductResDto, result);
@@ -77,20 +78,18 @@ export class ProductService {
   public search = async (
     payload: { name?: string; slug?: string } & CategoryPagination,
   ): Promise<ProductEntity[]> => {
-    console.log(payload.name, payload.slug);
+    console.log(payload.name ?? '', payload.slug);
+    const conditions: any = {};
+    if (payload.name) conditions.name = Like(`%${payload.name}}%`);
+    if (payload.slug) conditions.slug = Like(`%${payload.slug}}%`);
+
     if (!payload.name || !payload.limit) {
       return await this.productRepository.findBy({
-        where: {
-          name: Like(`%${payload.name ?? ''}%`),
-          slug: Like(`%${payload.slug ?? ''}%`),
-        },
+        where: conditions,
       });
     } else {
       return await this.productRepository.findBy({
-        where: {
-          name: Like(`%${payload.name ?? ''}%`),
-          slug: Like(`%${payload.slug ?? ''}%`),
-        },
+        where: conditions,
         skip: (payload.page - 1) * payload.limit,
         take: payload.limit,
       });

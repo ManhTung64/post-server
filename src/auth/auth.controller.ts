@@ -22,4 +22,8 @@ export class AuthController {
   async logout(@Req() request: Request) {
     return { success: await this.authService.logout(request['token']) };
   }
+  // @Get('refreshtoken')
+  // async refreshToken(){
+
+  // }
 }
